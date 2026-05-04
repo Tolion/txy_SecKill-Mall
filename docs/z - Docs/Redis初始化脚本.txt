@@ -1,0 +1,38 @@
+
+// 秒杀库存
+SET seckill:stock:1 1000
+SET seckill:stock:2 1000
+SET seckill:stock:3 1000
+
+
+// 防重复下单（同一用户不能重复抢）
+SADD seckill:buyer:1 1001
+SADD seckill:buyer:2 1001
+SADD seckill:buyer:3 1001
+
+
+// 秒杀商品基础信息（4.0.0之前不支持多设置）
+HSET seckill:product:1 productId 1
+HSET seckill:product:1 seckillPrice 15.9
+HSET seckill:product:1 status 1
+
+HSET seckill:product:2 productId 2
+HSET seckill:product:2 seckillPrice 6.9
+HSET seckill:product:2 status 1
+
+HSET seckill:product:3 productId 3
+HSET seckill:product:3 seckillPrice 199
+HSET seckill:product:3 status 1
+
+
+
+
+
+
+
+
+
+
+
+
+

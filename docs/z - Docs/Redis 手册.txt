@@ -1,0 +1,89 @@
+【redis开启】
+cd /d D:\Program File\Redis
+redis-server.exe
+redis-cli
+
+
+【批量删除refresh_token】D:\Program File\Redis\delete_refresh_token.lua
+redis-cli --eval delete_refresh_token.lua
+
+
+【最小统一命名规则】
+业务:模块:对象:标识
+全部小写
+用 : 分隔
+ID 放最后
+不要中文和空格
+
+
+1) 秒杀库存（最核心）
+key：seckill:stock:{seckillProductId}
+value：整数（剩余库存）
+例子：
+seckill:stock:1 = 100
+seckill:stock:2 = 50
+
+SET seckill:stock:1 1000
+SET seckill:stock:2 1000
+SET seckill:stock:3 1000
+
+扣除库存
+DECR seckill:stock:1
+获取库存
+GET seckill:stock:1
+
+
+2) 防重复下单（同一用户不能重复抢）
+key：seckill:buyer:{seckillProductId}
+type：Set
+value：用户 ID 集合
+例子：
+seckill:buyer:1 里有 1001,1002,1003
+判断是否买过：SISMEMBER seckill:buyer:1 1001
+
+SADD seckill:buyer:1 1001
+SADD seckill:buyer:2 1001
+SADD seckill:buyer:3 1001
+
+
+3) 秒杀商品基础信息（可选但推荐）
+key：seckill:product:{seckillProductId}
+type：Hash（推荐）或 String(JSON)
+字段示例：
+productId
+seckillPrice
+startTime
+endTime
+status
+
+HSET seckill:product:1 productId 1 seckillPrice 15.9 status 1
+HSET seckill:product:2 productId 2 seckillPrice 6.9 status 1
+HSET seckill:product:3 productId 3 seckillPrice 199 status 1
+（4.0.0之前不支持多设置）
+HSET seckill:product:1 productId 1
+HSET seckill:product:1 seckillPrice 15.9
+HSET seckill:product:1 status 1
+
+HSET seckill:product:2 productId 2
+HSET seckill:product:2 seckillPrice 6.9
+HSET seckill:product:2 status 1
+
+HSET seckill:product:3 productId 3
+HSET seckill:product:3 seckillPrice 199
+HSET seckill:product:3 status 1
+
+
+给库存加过期时间（避免活动后脏数据）
+例如活动后保留 1 天：
+EXPIRE seckill:stock:1 86400
+
+
+
+
+
+
+
+
+
+
+

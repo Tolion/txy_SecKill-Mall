@@ -1,0 +1,68 @@
+{
+  "后端接口信息": {
+    "Controller": "@RestController @RequestMapping(\"/api/mock\")",
+    "接口路径": "POST /api/mock/pay",
+    "请求DTO": {
+      "className": "ProductPayDTO",
+      "fields": {
+        "orderNo": "String // 订单号"
+      }
+    },
+    "响应格式": {
+      "className": "ResponseResult<ProductPayVO>",
+      "structure": {
+        "code": "int // 200=成功, 500=失败",
+        "message": "String // 提示信息",
+        "data": "ProductPayVO // 支付结果数据"
+      }
+    },
+    "PayVO结构": {
+      "className": "ProductPayVO",
+      "fields": {
+        "orderNo": "String // 订单号",
+        "payStatus": "Integer // 0=未支付 1=支付中 2=已支付 3=失败",
+        "payAmount": "BigDecimal // 实际支付金额",
+        "payTime": "LocalDateTime // 支付时间",
+        "tradeNo": "String // 第三方流水号"
+      }
+    }
+  },
+  "前端处理逻辑": {
+    "请求发送": {
+      "url": "http://localhost:8080/api/mock/pay",
+      "method": "POST",
+      "body": {
+        "orderNo": "订单号"
+      }
+    },
+    "响应处理": {
+      "HTTP层检查": "response.status === 200",
+      "业务层检查": "response.data.code === 200",
+      "数据提取": "paymentResult.value = response.data.data",
+      "成功判定": "paymentResult.value.payStatus === 2"
+    }
+  },
+  "完整响应示例": {
+    "HTTP状态": 200,
+    "响应体": {
+      "code": 200,
+      "message": "支付成功！",
+      "data": {
+        "orderNo": "17662372385272000788249390407682201",
+        "payStatus": 2,
+        "payAmount": 77.7,
+        "payTime": "2025-12-20T21:27:42.0055015",
+        "tradeNo": "MOCK1766237261999"
+      }
+    }
+  },
+  "前端判定逻辑": {
+    "支付成功条件": "payStatus === 2 || payStatus === '2'",
+    "显示内容": {
+      "标题": "支付成功",
+      "图标": "✅",
+      "状态文本": "已支付",
+      "样式类": "status-paid"
+    }
+  }
+}
